@@ -1,0 +1,5 @@
+﻿bs4
+Pillow
+PyPDF2
+requests
+typer
