@@ -2,47 +2,47 @@ name: Generate and Upload PDF
 
 on:
   schedule:
-    - cron: '0 0 * * 0'  # Esegue ogni domenica alle 00:00
-  workflow_dispatch:  # Consente di eseguire manualmente la workflow
+    - cron: '0 21 * * 5'  # Esegue ogni venerdi alle 21:00
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'  # Specifica la versione di Python necessaria
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt  # Se hai dipendenze da installare
+      - name: Install dependencies
+        run: |
+          python -m pip install
+          pip install -r requirements.txt
 
-    - name: Run script
-      run: python main.py 
+      - name: Run script
+        run: python src/main.py last
 
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: weekly-release-${{ github.run_number }}
-        release_name: Weekly Release ${{ github.run_number }}
-        draft: false
-        prerelease: false
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: weekly-release-${{ github.run_number }}
+          release_name: Weekly Release ${{ github.run_number }}
+          draft: false
+          prerelease: false
 
-    - name: Upload PDF to Release
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./ultimo.pdf
-        asset_name: ultimo.pdf
-        asset_content_type: application/pdf
+      - name: Upload PDF to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./ultimo.pdf
+          asset_name: ultimo.pdf
+          asset_content_type: application/pdf
